@@ -1,0 +1,15 @@
+import socket                                         
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)                                                                   
+s.bind((socket.gethostname(),9999))                                  
+s.listen(1)                                           
+c,addr = s.accept()      
+print("Got a connection from %s" % str(addr))
+c.send("Great You are connected!!")
+while 1:
+	xyz=c.recv(1024)
+	print(xyz)
+	st=raw_input(">")
+	c.send(st)
+	
+c.close()
