@@ -1,0 +1,13 @@
+import socket
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+s.connect((socket.gethostname(),9999))
+xyz=s.recv(1024)
+print(xyz)
+while 1:
+	st=raw_input(">")
+	s.send(st)
+	xyz=s.recv(1024)
+	print(">"+xyz)
+	
+s.close()
+
