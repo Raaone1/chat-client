@@ -1,15 +1,35 @@
-import socket                                         
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)                                                                   
-s.bind((socket.gethostname(),9999))                                  
-s.listen(1)                                           
-c,addr = s.accept()      
-print("Got a connection from %s" % str(addr))
-c.send("Great You are connected!!")
-while 1:
-	xyz=c.recv(1024)
-	print(xyz)
-	st=raw_input(">")
-	c.send(st)
-	
-c.close()
+import socket
+import select
+import sys
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.bind((socket.gethostname(),10010))
+input1=[s]
+running=1
+addr=[]
+flag=0
+s.listen(3)
+while running:
+	inputr,output,exc=select.select(input1,[],[])
+	for x in range(len(inputr)):
+		if inputr[x]==s:
+			s1,add=s.accept()
+			print("A Client is at "+str(add))
+			input1.append(s1)
+			addr.append(add)            
+		else:
+			c2=inputr[x].recv(1000)
+			if c2.decode()=="exit":
+				flag=1
+			for z in range(len(input1)):
+				if input1[z]==inputr[x]:
+					print(str(addr[z-1])+" said "+c2.decode())
+					if flag:
+						input1.pop(z)
+						addr.pop(z-1)
+						flag=0
+					break;
+			for y in range(len(input1)):
+				if(y!=0 and input1[y]!=inputr[x]):
+					input1[y].send(str(addr[z-1])+" says >"+c2.encode())
+s1.close()	
