@@ -1,13 +1,22 @@
 import socket
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-s.connect((socket.gethostname(),9999))
-xyz=s.recv(1024)
-print(xyz)
-while 1:
-	st=raw_input(">")
-	s.send(st)
-	xyz=s.recv(1024)
-	print(">"+xyz)
-	
-s.close()
-
+import sys
+import select
+s1=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s1.connect((socket.gethostname(),10010))
+print("Got connected to "+socket.gethostname())
+input1=[s1,sys.stdin]
+running=1
+while running:
+	input2,out,exc=select.select(input1,[],[])
+	for x in input2:
+		if x==s1:
+			c1=x.recv(1000)
+			print(c1.decode())
+		elif x==sys.stdin:
+			c2=sys.stdin.readline()
+			if c2=="exit\n":
+				s1.send("exit".encode())
+				running=0
+			else:	
+				s1.send(c2.encode()) 
+s1.close() 
